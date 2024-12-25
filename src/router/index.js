@@ -8,8 +8,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'auth',
-      component: AuthView,
+      name: 'exercises',
+      component: LogicalExercises,
     },
     {
       path: '/stores',
@@ -17,9 +17,9 @@ const router = createRouter({
       component: StoreCrud,
     },
     {
-      path: '/exercises',
-      name: 'exercises',
-      component: LogicalExercises,
+      path: '/auth',
+      name: 'auth',
+      component: AuthView,
     },
   ],
 })

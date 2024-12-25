@@ -7,10 +7,10 @@ import { RouterLink } from 'vue-router'
     <nav>
       <ul>
         <li>
-          <RouterLink to="/">Auth</RouterLink>
+          <RouterLink to="/">Exercises</RouterLink>
         </li>
         <li>
-          <RouterLink to="/exercises">Exercises</RouterLink>
+          <RouterLink to="/auth">Auth</RouterLink>
         </li>
         <li>
           <RouterLink to="/stores">Stores</RouterLink>
