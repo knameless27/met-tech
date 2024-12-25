@@ -86,12 +86,12 @@ export const getAllStores = async () => {
   }
 }
 
-export const createItem = async (itemName, storeId, itemData) => {
+export const createItem = async (itemName, store_id, price) => {
   try {
     const token = localStorage.getItem('token')
     const response = await apiClient.post(
       `item/${itemName}`,
-      { storeId, ...itemData },
+      { store_id, price },
       {
         headers: {
           ...apiClient.defaults.headers,

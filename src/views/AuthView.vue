@@ -1,5 +1,5 @@
 <script setup>
-import { registerUser } from '@/services'
+import { loginUser, registerUser } from '@/services'
 import { toast } from 'vue3-toastify'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -44,89 +44,34 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="auth-container">
-    <h1>Autenticación</h1>
-
-    <div class="auth-form" v-if="isRegister">
-      <h2>Registro</h2>
-      <form @submit.prevent="register">
-        <input v-model="registerData.name" type="text" placeholder="Nombre" required />
-        <input
-          v-model="registerData.email"
-          type="email"
-          placeholder="Correo Electrónico"
-          required
-        />
-        <input v-model="registerData.password" type="password" placeholder="Contraseña" required />
-        <button type="submit">Registrar</button>
-        <button class="secondary-btn" @click="isRegister = !isRegister">Iniciar Sesión</button>
+  <VCard class="auth-container" title="Autenticación">
+    <VCardText v-if="isRegister">
+      <h2 class="mb-2">Registro</h2>
+      <form class="d-flex flex-column" @submit.prevent="register">
+        <VTextField v-model="registerData.name" type="text" label="Nombre" required />
+        <VTextField v-model="registerData.email" type="email" label="Correo Electrónico" required />
+        <VTextField v-model="registerData.password" type="password" label="Contraseña" required />
+        <VBtn variant="elevated" color="primary" type="submit">Registrar</VBtn>
+        <VBtn variant="tonal" class="mt-3" @click="isRegister = !isRegister">Iniciar Sesión</VBtn>
       </form>
-    </div>
+    </VCardText>
 
-    <div class="auth-form" v-else>
-      <h2>Iniciar Sesión</h2>
-      <form @submit.prevent="login">
-        <input v-model="loginData.email" type="email" placeholder="Correo Electrónico" required />
-        <input v-model="loginData.password" type="password" placeholder="Contraseña" required />
-        <button type="submit">Iniciar Sesión</button>
-        <button class="secondary-btn" @click="isRegister = !isRegister">Registrar</button>
+    <VCardText v-else>
+      <h2 class="mb-2">Iniciar Sesión</h2>
+      <form class="d-flex flex-column" @submit.prevent="login">
+        <VTextField v-model="loginData.email" type="email" label="Correo Electrónico" required />
+        <VTextField v-model="loginData.password" type="password" label="Contraseña" required />
+        <VBtn variant="elevated" color="primary" type="submit">Iniciar Sesión</VBtn>
+        <VBtn variant="tonal" class="mt-3" @click="isRegister = !isRegister">Registrar</VBtn>
       </form>
-    </div>
-  </div>
+    </VCardText>
+  </VCard>
 </template>
 
-<style>
-.secondary-btn {
-  margin-top: 1vh;
-  padding: 10px;
-  background-color: transparent;
-  color: white;
-  border: 1px solid #007bff;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.secondary-btn:hover {
-  background-color: #007bff;
-}
-
+<style scoped>
 .auth-container {
-  font-family: Arial, sans-serif;
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.auth-form {
-  margin-bottom: 20px;
-}
-h2 {
-  margin-bottom: 10px;
-}
-form {
-  display: flex;
-  flex-direction: column;
-}
-input {
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #0056b3;
-}
-.message {
-  margin-top: 10px;
-  color: green;
 }
 </style>

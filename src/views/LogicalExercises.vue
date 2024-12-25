@@ -2,8 +2,8 @@
 import { reactive, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 
-const matrixInput = ref('')
-const stringInput = ref('')
+const matrixInput = ref('[[[1, 2, 3], [2, 3, 4]], [[5, 6, 7], [5, 4, 3]], [[3,5, 6], [4, 8, 3]]]')
+const stringInput = ref('(2 + 10) / 2 - 20')
 const matrixOutput = reactive({ dimension: null, straight: null, compute: null })
 const stringOutput = reactive({ operation: null, compute: null })
 
@@ -21,9 +21,13 @@ function executeMatrix() {
         return depth
       },
       straight: (m) => {
-        const checkUniform = (arr) =>
-          Array.isArray(arr) && arr.every((e) => Array.isArray(e) && e.length === arr[0].length)
-        return checkUniform(m)
+        if (!Array.isArray(m) || m.length === 0) return false
+
+        if (!Array.isArray(m[0])) return true
+
+        const rowLength = m[0].length
+
+        return m.every((row) => Array.isArray(row) && row.length === rowLength)
       },
       compute: (m) => {
         const flatten = (arr) =>
@@ -36,7 +40,9 @@ function executeMatrix() {
     matrixOutput.straight = MyMatrix.straight(matrix)
     matrixOutput.compute = MyMatrix.compute(matrix)
   } catch (error) {
-    toast.error('Error al procesar la matriz. Asegúrate de ingresarla en formato JSON válido.')
+    toast.error(
+      'Error al procesar la matriz. Asegúrate de ingresar el array o matriz sin comillas y sin letras.',
+    )
   }
 }
 
@@ -54,64 +60,53 @@ function executeString() {
       },
     }
 
-    stringOutput.operation = MyArray.operation(stringInput.value)
-    stringOutput.compute = stringOutput.operation && MyArray.compute(stringInput.value)
+    const operation = MyArray.operation(stringInput.value)
+    const compute = MyArray.compute(stringInput.value)
+    stringOutput.operation = (operation && compute) != false
+    stringOutput.compute = operation && compute
   } catch (error) {
-    toast.error('Error al procesar la cadena.')
+    toast.error(
+      'Error al procesar la cadena, asegurate de ingresarla sin letras ni simbolos especiales.',
+    )
   }
 }
+
+executeMatrix()
+executeString()
 </script>
 
 <template>
-  <div class="container">
-    <h1>Ejercicios Lógicos</h1>
-
-    <div class="exercise">
+  <VCard class="container" title="Ejercicios Lógicos">
+    <VCardText>
       <h2>Ejercicio: Operaciones con Matriz</h2>
-      <textarea v-model="matrixInput" placeholder="Ingresa la matriz aquí..."></textarea>
-      <button @click="executeMatrix">Ejecutar</button>
-      <div v-if="matrixOutput">
-        <p><strong>Dimensión:</strong> {{ matrixOutput.dimension }}</p>
-        <p><strong>¿Uniforme?:</strong> {{ matrixOutput.straight }}</p>
-        <p><strong>Suma:</strong> {{ matrixOutput.compute }}</p>
-      </div>
-    </div>
+      <VTextarea v-model="matrixInput" placeholder="Ingresa la matriz aquí..."></VTextarea>
+      <VBtn color="primary" @click="executeMatrix">Ejecutar</VBtn>
+      <VCard v-if="matrixOutput" class="mt-3">
+        <VCardText>
+          <p><strong>Dimensión:</strong> {{ matrixOutput.dimension }}</p>
+          <p><strong>¿Uniforme?:</strong> {{ matrixOutput.straight }}</p>
+          <p><strong>Suma:</strong> {{ matrixOutput.compute }}</p>
+        </VCardText>
+      </VCard>
+    </VCardText>
 
-    <!-- Ejercicio 2: Cadena -->
-    <div class="exercise">
+    <VCardText>
       <h2>Ejercicio: Operaciones con Cadena</h2>
-      <textarea v-model="stringInput" placeholder="Ingresa la cadena aquí..."></textarea>
-      <button @click="executeString">Ejecutar</button>
-      <div v-if="stringOutput">
-        <p><strong>¿Operación válida?:</strong> {{ stringOutput.operation }}</p>
-        <p><strong>Resultado:</strong> {{ stringOutput.compute }}</p>
-      </div>
-    </div>
-  </div>
+      <VTextarea v-model="stringInput" placeholder="Ingresa la cadena aquí..."></VTextarea>
+      <VBtn color="primary" @click="executeString">Ejecutar</VBtn>
+      <VCard v-if="stringOutput" class="mt-3">
+        <VCardText>
+          <p><strong>¿Operación válida?:</strong> {{ stringOutput.operation }}</p>
+          <p><strong>Resultado:</strong> {{ stringOutput.compute }}</p>
+        </VCardText>
+      </VCard>
+    </VCardText>
+  </VCard>
 </template>
 
 <style scoped>
 .container {
-  font-family: Arial, sans-serif;
   max-width: 600px;
   margin: 0 auto;
-}
-.exercise {
-  margin-bottom: 20px;
-}
-h2 {
-  margin-bottom: 10px;
-}
-textarea {
-  width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
-}
-button {
-  margin-bottom: 10px;
-  padding: 5px 10px;
-}
-div p {
-  margin: 5px 0;
 }
 </style>
