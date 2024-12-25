@@ -20,24 +20,28 @@ const router = useRouter()
 
 const register = async () => {
   try {
+    // Encriptar la contraseña para mayor seguridad antes de enviarla
     registerData.value.password = btoa(registerData.value.password)
     const { message } = await registerUser(registerData.value)
     toast.success(message)
     isRegister.value = false
   } catch (error) {
+    // Manejo de errores con un mensaje genérico si no se obtiene uno específico
     toast.error(error.message || 'Error al registrar.')
   }
 }
 
 const login = async () => {
   try {
+    // Encriptar la contraseña antes de enviarla
     loginData.value.password = btoa(loginData.value.password)
     const { access_token } = await loginUser(loginData.value)
     toast.success('Inicio de sesión exitoso. Bienvenido.')
-    localStorage.setItem('token', access_token)
-    router.push('stores')
-    loginData.value = { email: '', password: '' }
+    localStorage.setItem('token', access_token) // Guardar el token para futuras solicitudes autenticadas
+    router.push('stores') // Redirección a la página de tiendas tras iniciar sesión
+    loginData.value = { email: '', password: '' } // Limpieza de datos después del inicio de sesión
   } catch (error) {
+    // Mostrar un mensaje de error en caso de fallo en la autenticación
     toast.error(error.message || 'Error al iniciar sesión.')
   }
 }
@@ -45,6 +49,7 @@ const login = async () => {
 
 <template>
   <VCard class="auth-container" title="Autenticación">
+    <!-- Formulario de registro -->
     <VCardText v-if="isRegister">
       <h2 class="mb-2">Registro</h2>
       <form class="d-flex flex-column" @submit.prevent="register">
@@ -56,6 +61,7 @@ const login = async () => {
       </form>
     </VCardText>
 
+    <!-- Formulario de inicio de sesión -->
     <VCardText v-else>
       <h2 class="mb-2">Iniciar Sesión</h2>
       <form class="d-flex flex-column" @submit.prevent="login">

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {
   createItem,
   createStore,
@@ -41,7 +41,7 @@ async function getStores() {
 async function newStore(isActive) {
   try {
     await createStore(storeName.value)
-    toast.success('Tienda creada con exito!')
+    toast.success('Tienda creada con éxito!')
     isActive.value = false
     getStores()
   } catch (error) {
@@ -52,7 +52,7 @@ async function newStore(isActive) {
 async function removeStore(isActive, store) {
   try {
     await deleteStore(store)
-    toast.success('Tienda eliminada con exito!')
+    toast.success('Tienda eliminada con éxito!')
     isActive.value = false
     getStores()
   } catch (error) {
@@ -63,12 +63,12 @@ async function removeStore(isActive, store) {
 async function sendItem(isActive, store) {
   try {
     await createItem(newItemObj.value.name, store, newItemObj.value.price)
-    toast.success('Item agregado exitosamente!')
+    toast.success('Artículo agregado exitosamente!')
     isActive.value = false
     newItemObj.value = { name: '', price: 0 }
     getStores()
   } catch (error) {
-    toast.error('Error al agregar el item')
+    toast.error('Error al agregar el artículo')
   }
 }
 
@@ -76,23 +76,23 @@ async function itemEdit(isActive, store) {
   try {
     newItemObj.value.store_id = store
     await updateItem(newItemObj.value.name, newItemObj.value)
-    toast.success('Item agregado exitosamente!')
+    toast.success('Artículo actualizado exitosamente!')
     newItemObj.value = { name: '', price: 0 }
     isActive.value = false
     getStores()
   } catch (error) {
-    toast.error('Error al agregar el item')
+    toast.error('Error al actualizar el artículo')
   }
 }
 
 async function removeItem(isActive, item) {
   try {
     await deleteItem(item)
-    toast.success('Tienda eliminada con exito!')
+    toast.success('Artículo eliminado con éxito!')
     isActive.value = false
     getStores()
   } catch (error) {
-    toast.error('Error al eliminar la tienda')
+    toast.error('Error al eliminar el artículo')
   }
 }
 
