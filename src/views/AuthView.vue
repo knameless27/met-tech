@@ -1,6 +1,8 @@
 <script setup>
 import { registerUser } from '@/services'
+import { toast } from 'vue3-toastify'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const registerData = ref({
   name: '',
@@ -13,27 +15,30 @@ const loginData = ref({
   password: '',
 })
 
-const registerMessage = ref('')
-const loginMessage = ref('')
+const isRegister = ref(false)
+const router = useRouter()
 
 const register = async () => {
   try {
-    const response = await registerUser(registerData.value)
-    registerMessage.value = 'Registro exitoso. Ahora puedes iniciar sesión.'
-    registerData.value = { name: '', email: '', password: '' }
+    registerData.value.password = btoa(registerData.value.password)
+    const { message } = await registerUser(registerData.value)
+    toast.success(message)
+    isRegister.value = false
   } catch (error) {
-    registerMessage.value = error.message || 'Error al registrar.'
+    toast.error(error.message || 'Error al registrar.')
   }
 }
 
 const login = async () => {
   try {
-    const response = await loginUser(loginData.value)
-    loginMessage.value = 'Inicio de sesión exitoso. Bienvenido.'
-    console.log('Token de usuario:', response.token)
+    loginData.value.password = btoa(loginData.value.password)
+    const { access_token } = await loginUser(loginData.value)
+    toast.success('Inicio de sesión exitoso. Bienvenido.')
+    localStorage.setItem('token', access_token)
+    router.push('stores')
     loginData.value = { email: '', password: '' }
   } catch (error) {
-    loginMessage.value = error.message || 'Error al iniciar sesión.'
+    toast.error(error.message || 'Error al iniciar sesión.')
   }
 }
 </script>
@@ -42,7 +47,7 @@ const login = async () => {
   <div class="auth-container">
     <h1>Autenticación</h1>
 
-    <div class="auth-form">
+    <div class="auth-form" v-if="isRegister">
       <h2>Registro</h2>
       <form @submit.prevent="register">
         <input v-model="registerData.name" type="text" placeholder="Nombre" required />
@@ -54,23 +59,36 @@ const login = async () => {
         />
         <input v-model="registerData.password" type="password" placeholder="Contraseña" required />
         <button type="submit">Registrar</button>
+        <button class="secondary-btn" @click="isRegister = !isRegister">Iniciar Sesión</button>
       </form>
-      <p v-if="registerMessage" class="message">{{ registerMessage }}</p>
     </div>
 
-    <div class="auth-form">
+    <div class="auth-form" v-else>
       <h2>Iniciar Sesión</h2>
       <form @submit.prevent="login">
         <input v-model="loginData.email" type="email" placeholder="Correo Electrónico" required />
         <input v-model="loginData.password" type="password" placeholder="Contraseña" required />
         <button type="submit">Iniciar Sesión</button>
+        <button class="secondary-btn" @click="isRegister = !isRegister">Registrar</button>
       </form>
-      <p v-if="loginMessage" class="message">{{ loginMessage }}</p>
     </div>
   </div>
 </template>
 
 <style>
+.secondary-btn {
+  margin-top: 1vh;
+  padding: 10px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.secondary-btn:hover {
+  background-color: #007bff;
+}
+
 .auth-container {
   font-family: Arial, sans-serif;
   max-width: 400px;
